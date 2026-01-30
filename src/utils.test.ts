@@ -30,7 +30,7 @@ describe("utils.addChild", () => {
     utils.addChild(node, child);
     expect(node).toEqual({
       type: "paragraph",
-      content: [{ type: "text", text: "Hello", marks: [] }],
+      content: [{ type: "text", text: "Hello" }],
     });
   });
 
@@ -40,7 +40,7 @@ describe("utils.addChild", () => {
     utils.addChild(node, child);
     expect(node).toEqual({
       type: "paragraph",
-      content: [{ type: "text", text: "Hello", marks: [] }],
+      content: [{ type: "text", text: "Hello" }],
     });
   });
 
@@ -52,8 +52,8 @@ describe("utils.addChild", () => {
     expect(node).toEqual({
       type: "paragraph",
       content: [
-        { type: "text", text: "Hello", marks: [] },
-        { type: "text", text: "World", marks: [] },
+        { type: "text", text: "Hello" },
+        { type: "text", text: "World" },
       ],
     });
   });
@@ -69,7 +69,7 @@ describe("utils.createDocument", () => {
 describe("utils.createText", () => {
   test("should create a text node", () => {
     const text = utils.createText("Hello");
-    expect(text).toEqual({ type: "text", text: "Hello", marks: [] });
+    expect(text).toEqual({ type: "text", text: "Hello" });
   });
 
   test("should create a text node with marks", () => {

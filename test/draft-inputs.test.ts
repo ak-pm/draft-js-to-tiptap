@@ -92,7 +92,6 @@ test("draft-medium-complex", () => {
           {
             type: "text",
             text: "🕺🏽 ",
-            marks: [],
           },
           {
             type: "text",
@@ -106,7 +105,6 @@ test("draft-medium-complex", () => {
           {
             type: "text",
             text: " hosts a jazz second-line through the French Quarter at 3pm, followed by happy hour at Pat O'Brien's. (",
-            marks: [],
           },
           {
             type: "text",
@@ -127,7 +125,6 @@ test("draft-medium-complex", () => {
           {
             type: "text",
             text: ")",
-            marks: [],
           },
         ],
       },

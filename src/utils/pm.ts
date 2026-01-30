@@ -113,7 +113,7 @@ export type DocumentType<
 export type TextType<TMarkType extends MarkType = MarkType> = {
   type: "text";
   text: string;
-  marks: TMarkType[];
+  marks?: TMarkType[];
 };
 
 /**
@@ -219,7 +219,7 @@ export function createDocument(): DocumentType {
  * @returns The text node.
  */
 export function createText(text: string, marks?: MarkType[]): TextType {
-  return { type: "text", text, marks: marks || [] };
+  return { type: "text", text, ...marks ? { marks: marks } : {} };
 }
 
 /**
