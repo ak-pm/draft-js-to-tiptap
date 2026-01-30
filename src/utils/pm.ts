@@ -81,6 +81,20 @@ export interface NodeMapping {
     MarkType,
     NodeMapping["tableRow"][]
   >;
+  taskItem: NodeType<
+      "taskItem",
+      {
+        checked?: boolean;
+      },
+      MarkType,
+      (NodeType<"taskList"> | NodeType<"paragraph">)[]
+  >;
+  taskList: NodeType<
+      "taskList",
+      Record<string, any>,
+      MarkType,
+      NodeMapping["taskItem"][]
+  >;
   // Custom node types that are not real yet
   pageBreak: NodeType<"pageBreak">;
 }
@@ -269,9 +283,9 @@ export function isNode(node: unknown): node is NodeType {
  */
 export function isListNode(
   node: NodeType | null | undefined
-): node is NodeMapping["bulletList"] | NodeMapping["orderedList"] {
+): node is NodeMapping["bulletList"] | NodeMapping["orderedList"] | NodeMapping["taskList"] {
   return Boolean(
-    node && (node.type === "bulletList" || node.type === "orderedList")
+    node && (node.type === "bulletList" || node.type === "orderedList" || node.type === "taskList")
   );
 }
 

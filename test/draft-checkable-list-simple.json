@@ -1,0 +1,45 @@
+{
+    "blocks": [
+        {
+            "key": "cek31",
+            "data": {
+                "checked": true
+            },
+            "text": "Level 1 Checked",
+            "type": "checkable-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "7tiu3",
+            "data": {},
+            "text": "Level 1 Check 2 Not checked",
+            "type": "checkable-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "eocb8",
+            "data": {},
+            "text": "Level 1 Check 3 Not checked",
+            "type": "checkable-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "7qp46",
+            "data": {
+                "checked": true
+            },
+            "text": "Level 1 Check 4 Checked",
+            "type": "checkable-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        }
+    ],
+    "entityMap": {}
+}

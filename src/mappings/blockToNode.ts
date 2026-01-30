@@ -1,5 +1,31 @@
+import type { RawDraftContentBlock } from 'draft-js';
 import { addChild, createNode, createText, isListNode } from "../utils";
 import type { MapBlockToNodeFn } from "../types";
+
+
+type ListNodeNames =
+    { listNodeType: "taskList", listItemNodeType: "taskItem" } |
+    { listNodeType: "bulletList" | "orderedList", listItemNodeType: "listItem" };
+
+const getListNodeType = (blockType: RawDraftContentBlock["type"]): ListNodeNames => {
+  switch (blockType) {
+    case "checkable-list-item":
+      return {
+        listNodeType: "taskList",
+        listItemNodeType: "taskItem",
+      }
+    case "unordered-list-item":
+      return {
+        listNodeType: "bulletList",
+        listItemNodeType: "listItem",
+      }
+    default:
+      return {
+        listNodeType: "orderedList",
+        listItemNodeType: "listItem",
+      }
+  }
+}
 
 /**
  * Lists are represented as a tree structure in ProseMirror.
@@ -14,16 +40,16 @@ const mapToListNode: MapBlockToNodeFn = function ({
   next,
   converter,
 }) {
-  // Start a new list
-  const outerListNode =
-    getCurrentBlock().type === "unordered-list-item"
-      ? createNode("bulletList")
-      : createNode("orderedList");
+  // Find outer list and listItem node types
+  const { listNodeType: outerListNodeType, listItemNodeType: outerListItemNodeType } = getListNodeType(getCurrentBlock().type);
+  // Start a new outer list
+  const outerListNode = createNode(outerListNodeType);
 
   while (true) {
     let listNode = outerListNode;
 
     const currentBlock = getCurrentBlock();
+    const { listNodeType: innerListNodeType } = getListNodeType(currentBlock.type)
     let depth = 0;
     while (depth < currentBlock.depth) {
       if (!listNode.content?.length) {
@@ -32,7 +58,7 @@ const mapToListNode: MapBlockToNodeFn = function ({
       // There are list items in-between, find the most recent one
       let mostRecentListItem = listNode.content[listNode.content.length - 1];
       if (!mostRecentListItem) {
-        mostRecentListItem = createNode("listItem");
+        mostRecentListItem = createNode(outerListItemNodeType);
         addChild(listNode, mostRecentListItem);
       }
 
@@ -46,10 +72,7 @@ const mapToListNode: MapBlockToNodeFn = function ({
         depth++;
       } else {
         // We didn't find a list, in the last position, create a new one
-        nextMostRecentList =
-          currentBlock.type === "unordered-list-item"
-            ? createNode("bulletList")
-            : createNode("orderedList");
+        nextMostRecentList = createNode(innerListNodeType);
 
         addChild(mostRecentListItem, nextMostRecentList);
 
@@ -62,12 +85,16 @@ const mapToListNode: MapBlockToNodeFn = function ({
     // We found the correct list, add the new list item
     addChild(
       listNode,
-      createNode("listItem", {
+      // "bulletList" and "orderedList" could nest each other but not "taskList" and vice versa
+      createNode(outerListItemNodeType, {
+        ...outerListItemNodeType === "taskItem"
+          ? { attrs: { checked: Boolean(currentBlock.data?.checked) } }
+          : {},
         content: [
           createNode("paragraph", {
             content: converter.splitTextByEntityRangesAndInlineStyleRanges({
               doc,
-              block: getCurrentBlock(),
+              block: currentBlock,
               entityMap,
             }),
           }),
@@ -79,7 +106,8 @@ const mapToListNode: MapBlockToNodeFn = function ({
     if (
       !(
         (nextBlock && nextBlock.type === "unordered-list-item") ||
-        (nextBlock && nextBlock.type === "ordered-list-item")
+        (nextBlock && nextBlock.type === "ordered-list-item") ||
+        (nextBlock && nextBlock.type === "checkable-list-item")
       )
     ) {
       break;
@@ -229,6 +257,7 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
   },
   "unordered-list-item": mapToListNode,
   "ordered-list-item": mapToListNode,
+  "checkable-list-item": mapToListNode,
   "header-one": mapToHeadingNode,
   "header-two": mapToHeadingNode,
   "header-three": mapToHeadingNode,
