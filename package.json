@@ -2,6 +2,7 @@
   "name": "@tiptap/draftjs-to-tiptap",
   "module": "./dist/index.js",
   "type": "module",
+  "types": "dist/index.d.ts",
   "version": "0.1.1",
   "license": "MIT",
   "repository": {
