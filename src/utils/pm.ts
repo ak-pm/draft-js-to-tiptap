@@ -232,8 +232,10 @@ export function createDocument(): DocumentType {
  * @param marks The marks to apply to the text node.
  * @returns The text node.
  */
-export function createText(text: string, marks?: MarkType[]): TextType {
-  return { type: "text", text, ...marks ? { marks: marks } : {} };
+export function createText(text: string, marks?: MarkType[]): TextType | null {
+  if (!text) return null;
+
+  return { type: "text", text, ...marks && { marks } };
 }
 
 /**
