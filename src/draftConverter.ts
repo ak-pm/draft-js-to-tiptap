@@ -229,7 +229,7 @@ export class DraftConverter {
     }
 
     return result.map(({ text, ranges }) => {
-      const textNode = createText(text);
+      const textNode = createText(text)!;
 
       ranges.forEach((range) =>
         addMark(

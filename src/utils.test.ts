@@ -80,6 +80,11 @@ describe("utils.createText", () => {
       marks: [{ type: "bold" }],
     });
   });
+
+  test("should not create a text node without", () => {
+    const text = utils.createText("", [{ type: "bold" }]);
+    expect(text).toEqual(null);
+  });
 });
 
 describe("utils.addMark", () => {
