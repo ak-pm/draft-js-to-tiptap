@@ -3,6 +3,25 @@ import { addChild, createNode, createText, isListNode } from "../utils";
 import type { MapBlockToNodeFn } from "../types";
 
 
+const mapToParagraphNode: MapBlockToNodeFn = function ({ doc, block, entityMap, converter }) {
+  const paragraph = createNode("paragraph");
+  if (block.inlineStyleRanges.length === 0) {
+    if (block.entityRanges.length === 0) {
+      // Plain text, fast path
+      return addChild(paragraph, createText(block.text));
+    }
+  }
+
+  return addChild(
+      paragraph,
+      converter.splitTextByEntityRangesAndInlineStyleRanges({
+        doc,
+        block,
+        entityMap,
+      })
+  );
+};
+
 type ListNodeNames =
     { listNodeType: "taskList", listItemNodeType: "taskItem" } |
     { listNodeType: "bulletList" | "orderedList", listItemNodeType: "listItem" };
@@ -237,24 +256,9 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
       ],
     });
   },
-  unstyled({ doc, block, entityMap, converter }) {
-    const paragraph = createNode("paragraph");
-    if (block.inlineStyleRanges.length === 0) {
-      if (block.entityRanges.length === 0) {
-        // Plain text, fast path
-        return addChild(paragraph, createText(block.text));
-      }
-    }
-
-    return addChild(
-      paragraph,
-      converter.splitTextByEntityRangesAndInlineStyleRanges({
-        doc,
-        block,
-        entityMap,
-      })
-    );
-  },
+  unstyled: mapToParagraphNode,
+  section: mapToParagraphNode,
+  article: mapToParagraphNode,
   "unordered-list-item": mapToListNode,
   "ordered-list-item": mapToListNode,
   "checkable-list-item": mapToListNode,

@@ -4,6 +4,7 @@ import draftListSimple from "./draft-list-simple.json";
 import draftCheckableListSimple from "./draft-checkable-list-simple.json";
 import draftList from "./draft-list.json";
 import draftCheckableList from "./draft-checkable-list.json";
+import draftInput from "./draft-input.json";
 import draftAxios from "./draft-axios.json";
 import draftTail from "./draft-drafttail.json";
 import draftTailTable from "./draft-table-drafttail.json";
@@ -27,6 +28,11 @@ test("draft-list", () => {
 test("draft-checkable-list", () => {
   const converter = new DraftConverter();
   expect(converter.convert(draftCheckableList)).toMatchSnapshot();
+});
+
+test("draft-input", () => {
+  const converter = new DraftConverter();
+  expect(converter.convert(draftInput as any)).toMatchSnapshot();
 });
 
 test("draft-axios", () => {

@@ -137,6 +137,24 @@
       "data": {}
     },
     {
+      "key": "5ro41",
+      "text": "Wow, this function converts \"section\" to \"unstyled\"",
+      "type": "section",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "5ro41",
+      "text": "Wow, this function converts \"article\" to \"unstyled\"",
+      "type": "article",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
       "key": "14ddo",
       "text": "ok",
       "type": "unordered-list-item",
