@@ -186,6 +186,7 @@ var mapToListNode = function({
   entityMap,
   peek,
   next,
+  peekPrev,
   converter
 }) {
   const { listNodeType: outerListNodeType, listItemNodeType: outerListItemNodeType } = getListNodeType(getCurrentBlock().type);
@@ -195,7 +196,10 @@ var mapToListNode = function({
     const currentBlock = getCurrentBlock();
     const { listNodeType: innerListNodeType } = getListNodeType(currentBlock.type);
     let depth = 0;
-    while (depth < currentBlock.depth) {
+    const prevBlock = peekPrev();
+    const prevBlockDepth = prevBlock && ["unordered-list-item", "ordered-list-item", "checkable-list-item"].includes(prevBlock.type) ? prevBlock.depth : -1;
+    const currentBlockDepth = currentBlock.depth > prevBlockDepth ? prevBlockDepth + 1 : currentBlock.depth;
+    while (depth < currentBlockDepth) {
       if (!listNode.content?.length) {
         listNode.content = [];
       }
