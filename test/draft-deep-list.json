@@ -1,0 +1,113 @@
+{
+    "blocks": [
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 5 -> 0",
+            "type": "ordered-list-item",
+            "depth": 5,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 1 -> 1",
+            "type": "ordered-list-item",
+            "depth": 1,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 5 -> 2",
+            "type": "ordered-list-item",
+            "depth": 5,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 3 -> 3",
+            "type": "ordered-list-item",
+            "depth": 3,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 7 -> 4",
+            "type": "ordered-list-item",
+            "depth": 7,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 3 -> 3",
+            "type": "ordered-list-item",
+            "depth": 3,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 7 -> 4",
+            "type": "ordered-list-item",
+            "depth": 7,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 3 -> 3",
+            "type": "ordered-list-item",
+            "depth": 3,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 2 -> 2",
+            "type": "ordered-list-item",
+            "depth": 2,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 1 -> 1",
+            "type": "ordered-list-item",
+            "depth": 1,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 2 -> 2",
+            "type": "ordered-list-item",
+            "depth": 2,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "test",
+            "data": {},
+            "text": "depth 0 -> 0",
+            "type": "ordered-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        }
+    ],
+    "entityMap": {}
+}

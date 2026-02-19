@@ -3236,3 +3236,214 @@ exports[`draft-medium-complex 1`] = `
   "type": "doc",
 }
 `;
+
+exports[`draft-deep-list 1`] = `
+{
+  "content": [
+    {
+      "content": [
+        {
+          "content": [
+            {
+              "content": [
+                {
+                  "text": "depth 5 -> 0",
+                  "type": "text",
+                },
+              ],
+              "type": "paragraph",
+            },
+            {
+              "content": [
+                {
+                  "content": [
+                    {
+                      "content": [
+                        {
+                          "text": "depth 1 -> 1",
+                          "type": "text",
+                        },
+                      ],
+                      "type": "paragraph",
+                    },
+                    {
+                      "content": [
+                        {
+                          "content": [
+                            {
+                              "content": [
+                                {
+                                  "text": "depth 5 -> 2",
+                                  "type": "text",
+                                },
+                              ],
+                              "type": "paragraph",
+                            },
+                            {
+                              "content": [
+                                {
+                                  "content": [
+                                    {
+                                      "content": [
+                                        {
+                                          "text": "depth 3 -> 3",
+                                          "type": "text",
+                                        },
+                                      ],
+                                      "type": "paragraph",
+                                    },
+                                    {
+                                      "content": [
+                                        {
+                                          "content": [
+                                            {
+                                              "content": [
+                                                {
+                                                  "text": "depth 7 -> 4",
+                                                  "type": "text",
+                                                },
+                                              ],
+                                              "type": "paragraph",
+                                            },
+                                          ],
+                                          "type": "listItem",
+                                        },
+                                      ],
+                                      "type": "orderedList",
+                                    },
+                                  ],
+                                  "type": "listItem",
+                                },
+                                {
+                                  "content": [
+                                    {
+                                      "content": [
+                                        {
+                                          "text": "depth 3 -> 3",
+                                          "type": "text",
+                                        },
+                                      ],
+                                      "type": "paragraph",
+                                    },
+                                    {
+                                      "content": [
+                                        {
+                                          "content": [
+                                            {
+                                              "content": [
+                                                {
+                                                  "text": "depth 7 -> 4",
+                                                  "type": "text",
+                                                },
+                                              ],
+                                              "type": "paragraph",
+                                            },
+                                          ],
+                                          "type": "listItem",
+                                        },
+                                      ],
+                                      "type": "orderedList",
+                                    },
+                                  ],
+                                  "type": "listItem",
+                                },
+                                {
+                                  "content": [
+                                    {
+                                      "content": [
+                                        {
+                                          "text": "depth 3 -> 3",
+                                          "type": "text",
+                                        },
+                                      ],
+                                      "type": "paragraph",
+                                    },
+                                  ],
+                                  "type": "listItem",
+                                },
+                              ],
+                              "type": "orderedList",
+                            },
+                          ],
+                          "type": "listItem",
+                        },
+                        {
+                          "content": [
+                            {
+                              "content": [
+                                {
+                                  "text": "depth 2 -> 2",
+                                  "type": "text",
+                                },
+                              ],
+                              "type": "paragraph",
+                            },
+                          ],
+                          "type": "listItem",
+                        },
+                      ],
+                      "type": "orderedList",
+                    },
+                  ],
+                  "type": "listItem",
+                },
+                {
+                  "content": [
+                    {
+                      "content": [
+                        {
+                          "text": "depth 1 -> 1",
+                          "type": "text",
+                        },
+                      ],
+                      "type": "paragraph",
+                    },
+                    {
+                      "content": [
+                        {
+                          "content": [
+                            {
+                              "content": [
+                                {
+                                  "text": "depth 2 -> 2",
+                                  "type": "text",
+                                },
+                              ],
+                              "type": "paragraph",
+                            },
+                          ],
+                          "type": "listItem",
+                        },
+                      ],
+                      "type": "orderedList",
+                    },
+                  ],
+                  "type": "listItem",
+                },
+              ],
+              "type": "orderedList",
+            },
+          ],
+          "type": "listItem",
+        },
+        {
+          "content": [
+            {
+              "content": [
+                {
+                  "text": "depth 0 -> 0",
+                  "type": "text",
+                },
+              ],
+              "type": "paragraph",
+            },
+          ],
+          "type": "listItem",
+        },
+      ],
+      "type": "orderedList",
+    },
+  ],
+  "type": "doc",
+}
+`;
