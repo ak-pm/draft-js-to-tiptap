@@ -239,9 +239,7 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
     return addChild(paragraph, entities);
   },
   "code-block"({ block }) {
-    return createNode("codeBlock", {
-      content: [createText(block.text)],
-    });
+    return addChild(createNode("codeBlock"), createText(block.text));
   },
   blockquote({ doc, block, entityMap, converter }) {
     return createNode("blockquote", {
