@@ -1,0 +1,50 @@
+{
+    "blocks": [
+        {
+            "key": "fs1eu",
+            "data": {},
+            "text": "Point 1",
+            "type": "ordered-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "1ttv0",
+            "data": {},
+            "text": "Nested Bullet 1",
+            "type": "unordered-list-item",
+            "depth": 1,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "e5oim",
+            "data": {},
+            "text": "Nested Bullet 2",
+            "type": "unordered-list-item",
+            "depth": 1,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "39tfs",
+            "data": {},
+            "text": "Nested Bullet 3",
+            "type": "unordered-list-item",
+            "depth": 1,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        },
+        {
+            "key": "b1k48",
+            "data": {},
+            "text": "Point 2",
+            "type": "ordered-list-item",
+            "depth": 0,
+            "entityRanges": [],
+            "inlineStyleRanges": []
+        }
+    ],
+    "entityMap": {}
+}

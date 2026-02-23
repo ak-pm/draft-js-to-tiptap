@@ -1717,12 +1717,7 @@ exports[`draft-drafttail 1`] = `
       "type": "paragraph",
     },
     {
-      "content": [
-        {
-          "type": "horizontalRule",
-        },
-      ],
-      "type": "paragraph",
+      "type": "horizontalRule",
     },
     {
       "content": [
@@ -1756,16 +1751,11 @@ break"
       "type": "paragraph",
     },
     {
-      "content": [
-        {
-          "attrs": {
-            "alt": "",
-            "src": "https://publish-01.obsidian.md/access/64fc2564d66746d9e19f2f34c7e03326/blog/assets/Logo.png",
-          },
-          "type": "image",
-        },
-      ],
-      "type": "paragraph",
+      "attrs": {
+        "alt": "",
+        "src": "https://publish-01.obsidian.md/access/64fc2564d66746d9e19f2f34c7e03326/blog/assets/Logo.png",
+      },
+      "type": "image",
     },
     {
       "content": [
@@ -3432,6 +3422,94 @@ exports[`draft-deep-list 1`] = `
               "content": [
                 {
                   "text": "depth 0 -> 0",
+                  "type": "text",
+                },
+              ],
+              "type": "paragraph",
+            },
+          ],
+          "type": "listItem",
+        },
+      ],
+      "type": "orderedList",
+    },
+  ],
+  "type": "doc",
+}
+`;
+
+exports[`draft-nested-list 1`] = `
+{
+  "content": [
+    {
+      "content": [
+        {
+          "content": [
+            {
+              "content": [
+                {
+                  "text": "Point 1",
+                  "type": "text",
+                },
+              ],
+              "type": "paragraph",
+            },
+            {
+              "content": [
+                {
+                  "content": [
+                    {
+                      "content": [
+                        {
+                          "text": "Nested Bullet 1",
+                          "type": "text",
+                        },
+                      ],
+                      "type": "paragraph",
+                    },
+                  ],
+                  "type": "listItem",
+                },
+                {
+                  "content": [
+                    {
+                      "content": [
+                        {
+                          "text": "Nested Bullet 2",
+                          "type": "text",
+                        },
+                      ],
+                      "type": "paragraph",
+                    },
+                  ],
+                  "type": "listItem",
+                },
+                {
+                  "content": [
+                    {
+                      "content": [
+                        {
+                          "text": "Nested Bullet 3",
+                          "type": "text",
+                        },
+                      ],
+                      "type": "paragraph",
+                    },
+                  ],
+                  "type": "listItem",
+                },
+              ],
+              "type": "bulletList",
+            },
+          ],
+          "type": "listItem",
+        },
+        {
+          "content": [
+            {
+              "content": [
+                {
+                  "text": "Point 2",
                   "type": "text",
                 },
               ],

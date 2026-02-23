@@ -21,8 +21,8 @@ import {
   isInlineStyleRange,
   type DocumentType,
   type MarkType,
-  type NodeType,
   type TextType,
+  type NodeMapping,
 } from "./utils";
 import {
   mapBlockToNode,
@@ -122,7 +122,7 @@ export class DraftConverter {
   }
 
   mapBlockToNode: MapBlockToNodeFn = (options) => {
-    let didConsume: null | NodeType = null;
+    let didConsume: NodeMapping["block"] | true | null = null;
     try {
       didConsume = this.options.mapBlockToNode.call(this, options) ?? null;
     } catch (e) {

@@ -15,30 +15,42 @@ export interface NodeMapping {
   /**
    * Doc is special, it's the root of the document
    */
-  doc: NodeType<"doc", Record<string, any>, MarkType, NodeType[]>;
+  doc: NodeType<"doc", Record<string, any>, MarkType, NodeMapping["block"][]>;
+  block: NodeMapping["blockquote" | "bulletList" | "codeBlock" | "heading" | "paragraph" | "taskList" | "orderedList" | "table" | "horizontalRule" | "image"];
+  inline: NodeMapping["text" | "hardBreak"];
+  list: NodeMapping["bulletList" | "orderedList" | "taskList"];
   /**
    * Text is special, it's the leaf node of the document
    */
-  text: NodeType<"text", Record<string, any>, MarkType, never>;
+  text: NodeType<"text"> & TextType;
   // All other node types are defined here.
-  blockquote: NodeType<"blockquote">;
+  blockquote: Omit<NodeType<"blockquote">, "content"> & {
+    content: NodeMapping["block"][]
+  };
   bulletList: NodeType<
     "bulletList",
     Record<string, any>,
     MarkType,
     NodeMapping["listItem"][]
   >;
-  codeBlock: NodeType<"codeBlock">;
+  codeBlock: NodeType<
+      "codeBlock",
+      Record<string, any>,
+      MarkType,
+      NodeMapping["text"][]
+  >;
   hardBreak: NodeType<"hardBreak">;
-  heading: NodeType<"heading", { level: number }>;
+  heading: NodeType<
+      "heading",
+      { level: number },
+      MarkType,
+      NodeMapping["inline"][]
+  >;
   horizontalRule: NodeType<"horizontalRule">;
   image: NodeType<"image", { src: string; alt?: string }>;
-  listItem: NodeType<
-    "listItem",
-    Record<string, any>,
-    MarkType,
-    (NodeType<"bulletList"> | NodeType<"orderedList"> | NodeType<"paragraph">)[]
-  >;
+  listItem: Omit<NodeType<"listItem">, 'content'> & {
+    content: NodeMapping["block"][]
+  };
   orderedList: NodeType<
     "orderedList",
     {
@@ -48,32 +60,37 @@ export interface NodeMapping {
     MarkType,
     NodeMapping["listItem"][]
   >;
-  paragraph: NodeType<"paragraph">;
-  tableCell: NodeType<
+  paragraph: NodeType<
+      "paragraph",
+      Record<string, any>,
+      MarkType,
+      NodeMapping["inline"][]
+  >;
+  tableCell: Omit<NodeType<
     "tableCell",
     {
       colwidth?: number[];
       colspan?: number;
       rowspan?: number;
-    },
-    MarkType,
-    NodeType[]
-  >;
-  tableHeader: NodeType<
-    "tableCell",
+    }
+  >, "content"> & {
+    content: NodeMapping["block"][]
+  };
+  tableHeader: Omit<NodeType<
+    "tableHeader",
     {
       colwidth?: number[];
       colspan?: number;
       rowspan?: number;
-    },
-    MarkType,
-    NodeType[]
-  >;
+    }
+  >, 'content'> & {
+    content: NodeMapping["block"][]
+  };
   tableRow: NodeType<
     "tableRow",
     Record<string, any>,
     MarkType,
-    NodeMapping["tableCell"][]
+    NodeMapping["tableCell" | "tableHeader"][]
   >;
   table: NodeType<
     "table",
@@ -81,14 +98,9 @@ export interface NodeMapping {
     MarkType,
     NodeMapping["tableRow"][]
   >;
-  taskItem: NodeType<
-      "taskItem",
-      {
-        checked?: boolean;
-      },
-      MarkType,
-      (NodeType<"taskList"> | NodeType<"paragraph">)[]
-  >;
+  taskItem: Omit<NodeType<"taskItem", { checked?: boolean }>, 'content'> & {
+    content: NodeMapping["block"][]
+  };
   taskList: NodeType<
       "taskList",
       Record<string, any>,
@@ -107,21 +119,23 @@ export type MarkType<
   attrs?: Attributes & Record<string, any>;
 };
 
+export type AnyNodeType = NodeType<string, Record<string, any>, MarkType, AnyNodeType[]>
+
 export type NodeType<
   TNodeType extends string = string,
   TNodeAttributes extends Record<string, any> = Record<string, any>,
   TMarkType extends MarkType = MarkType,
-  TContentType extends NodeType[] = any
+  TContentType extends AnyNodeType[] = never
 > = {
   type: TNodeType;
   attrs?: TNodeAttributes & Record<string, any>;
-  content?: TContentType;
   marks?: TMarkType[];
+  content?: TContentType;
 };
 
 export type DocumentType<
   TNodeAttributes extends Record<string, any> = Record<string, any>,
-  TContentType extends NodeType[] = NodeType[]
+  TContentType extends AnyNodeType[] = NodeMapping["block"][]
 > = NodeType<"doc", TNodeAttributes, never, TContentType>;
 
 export type TextType<TMarkType extends MarkType = MarkType> = {
@@ -135,10 +149,10 @@ export type TextType<TMarkType extends MarkType = MarkType> = {
  * @returns The parent node with the child node added.
  */
 export function addChild<TNodeType extends keyof NodeMapping>(
-  node: NodeMapping[TNodeType],
+  node: NodeMapping[TNodeType] & { type: TNodeType },
   child:
-    | NodeMapping[TNodeType]["content"][number][]
-    | NodeMapping[TNodeType]["content"][number]
+    | NodeMapping[TNodeType]["content"]
+    | NonNullable<NodeMapping[TNodeType]["content"]>[number]
     | null
 ): NodeMapping[TNodeType] {
   if (!node && !child) {
@@ -154,9 +168,9 @@ export function addChild<TNodeType extends keyof NodeMapping>(
   }
 
   if (Array.isArray(child)) {
-    node.content.push.apply(node.content, child);
+    (node as AnyNodeType).content!.push.apply(node.content, child);
   } else {
-    node.content.push(child);
+    (node as AnyNodeType).content!.push(child);
   }
 
   return node;
@@ -284,61 +298,9 @@ export function isNode(node: unknown): node is NodeType {
  * Check if a node is a list node.
  */
 export function isListNode(
-  node: NodeType | null | undefined
+  node: AnyNodeType | null | undefined
 ): node is NodeMapping["bulletList"] | NodeMapping["orderedList"] | NodeMapping["taskList"] {
   return Boolean(
     node && (node.type === "bulletList" || node.type === "orderedList" || node.type === "taskList")
   );
-}
-
-/**
- * Adds a child to a list node, keeping the list structure intact.
- */
-export function addChildToList<TNodeType extends keyof NodeMapping>(
-  /**
-   * The list to add the child to
-   */
-  parent: NodeMapping[TNodeType],
-  /**
-   * The child to add to the list
-   */
-  child: NodeType,
-  /**
-   * If true, append the child to the last list item in the list, if it exists
-   * If false, add the child as a new list item
-   * @default false
-   */
-  append = true
-) {
-  // If the parent is not a list node, add the child directly
-  if (!isListNode(parent)) {
-    addChild(parent, child);
-    return;
-  }
-
-  // If already adding a list item, add the child to the list item directly
-  if (child.type === "listItem") {
-    addChild(parent, child);
-    return;
-  }
-
-  // If the child is a list, add it to the list within it's own list item
-  if (child.type === "orderedList" || child.type === "bulletList") {
-    if (append && parent.content) {
-      const lastChild = parent.content[parent.content.length - 1];
-      if (lastChild) {
-        addChild(lastChild, child);
-        return;
-      }
-    }
-  }
-
-  if (child.type === "paragraph" && (child.content || []).length === 0) {
-    // Ignore empty paragraphs
-    return;
-  }
-
-  // Wrap the child in a list item
-  child = addChild(createNode("listItem"), child);
-  addChild(parent, child);
 }

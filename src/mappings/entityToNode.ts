@@ -1,6 +1,6 @@
 import type { RawDraftEntity } from "draft-js";
 
-import { type NodeType, createNode } from "../utils";
+import { createNode } from "../utils";
 import type { DraftConverter } from "../draftConverter";
 import type { MapEntityToNodeFn } from "../types";
 
@@ -9,7 +9,7 @@ export const entityToNodeMapping: Record<
   (context: {
     entity: RawDraftEntity;
     converter: DraftConverter;
-  }) => NodeType | null
+  }) => ReturnType<MapEntityToNodeFn>
 > = {
   HORIZONTAL_RULE: () => {
     return createNode("horizontalRule");

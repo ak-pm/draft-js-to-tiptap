@@ -6,7 +6,7 @@ import type {
 } from "draft-js";
 
 import type { DraftConverter } from "./draftConverter";
-import type { DocumentType, MarkType, NodeType } from "./utils";
+import type { DocumentType, MarkType, NodeMapping } from './utils';
 
 /**
  * A function that maps a Draft.js block to a ProseMirror node.
@@ -65,7 +65,7 @@ export type MapBlockToNodeFn = (context: {
    * @returns The previous block or null if there is no previous block.
    */
   prev: () => RawDraftContentBlock | null;
-}) => NodeType | null | void | undefined;
+}) => NodeMapping["block"] | true | null | undefined;
 
 /**
  * A function that maps a Draft.js inline style to a ProseMirror mark.
@@ -87,7 +87,7 @@ export type MapInlineStyleToMarkFn = (context: {
    * The current block being converted.
    */
   block: RawDraftContentBlock;
-}) => MarkType | null | void | undefined;
+}) => MarkType | null | undefined;
 
 /**
  * A function that maps a Draft.js entity to a ProseMirror mark.
@@ -113,7 +113,7 @@ export type MapEntityToMarkFn = (context: {
    * The current block being converted.
    */
   block: RawDraftContentBlock;
-}) => MarkType | null | void | undefined;
+}) => MarkType | null | undefined;
 
 /**
  * A function that maps a Draft.js entity to a ProseMirror node.
@@ -139,4 +139,4 @@ export type MapEntityToNodeFn = (context: {
    * The current block being converted.
    */
   block: RawDraftContentBlock;
-}) => NodeType | null | void | undefined;
+}) => NodeMapping["block"] | null | undefined;

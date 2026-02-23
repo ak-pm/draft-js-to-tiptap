@@ -35,7 +35,7 @@ describe("utils.addChild", () => {
   });
 
   test("should add child to a node with content", () => {
-    const node = utils.createNode("paragraph", { content: [] });
+    const node = utils.createNode("paragraph");
     const child = utils.createText("Hello");
     utils.addChild(node, child);
     expect(node).toEqual({
@@ -45,9 +45,9 @@ describe("utils.addChild", () => {
   });
 
   test("should add multiple children to a node with content", () => {
-    const node = utils.createNode("paragraph", { content: [] });
-    const child = utils.createText("Hello");
-    const anotherChild = utils.createText("World");
+    const node = utils.createNode("paragraph");
+    const child = utils.createText("Hello")!;
+    const anotherChild = utils.createText("World")!;
     utils.addChild(node, [child, anotherChild]);
     expect(node).toEqual({
       type: "paragraph",

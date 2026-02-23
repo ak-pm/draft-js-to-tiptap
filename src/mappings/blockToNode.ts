@@ -1,5 +1,5 @@
-import type { RawDraftContentBlock } from 'draft-js';
-import { addChild, createNode, createText, isListNode } from "../utils";
+import type { RawDraftContentBlock } from "draft-js";
+import { addChild, type AnyNodeType, createNode, createText, isListNode, type NodeMapping } from "../utils";
 import type { MapBlockToNodeFn } from "../types";
 
 
@@ -13,12 +13,12 @@ const mapToParagraphNode: MapBlockToNodeFn = function ({ doc, block, entityMap, 
   }
 
   return addChild(
-      paragraph,
-      converter.splitTextByEntityRangesAndInlineStyleRanges({
-        doc,
-        block,
-        entityMap,
-      })
+    paragraph,
+    converter.splitTextByEntityRangesAndInlineStyleRanges({
+      doc,
+      block,
+      entityMap,
+    })
   );
 };
 
@@ -46,6 +46,8 @@ const getListNodeType = (blockType: RawDraftContentBlock["type"]): ListNodeNames
   }
 }
 
+type ListElementNode = NonNullable<NodeMapping["list"]["content"]>[number];
+
 /**
  * Lists are represented as a tree structure in ProseMirror.
  * Whereas in Draft.js they are represented as a flat list.
@@ -61,34 +63,39 @@ const addListItemBlock: MapBlockToNodeFn = function ({
 }) {
   const currentBlock = getCurrentBlock();
   const { listNodeType, listItemNodeType } = getListNodeType(currentBlock.type);
-  let container = doc;
+  let container: NodeMapping["doc"] | ListElementNode = doc;
   for (let depth = 0; depth < currentBlock.depth; depth++) {
-    const listNode = container.content?.at(-1); // an existing (list?) node as the last child of the container
+    const listNode = container.content?.at(-1) as AnyNodeType | undefined; // an existing (list?) node as the last child of the container
     if (listNode && isListNode(listNode)) {
-      const listItem = listNode.content[listNode.content.length - 1]; // it's a list node, which is never empty
+      const listItem = listNode.content![listNode.content!.length - 1]; // it's a list node, which is never empty
       container = listItem; // search for/add nested lists here
     } else {
       // there is no existing list at the necessary depth, constructed for a previous list item block
       // `currentBlock.depth` is too large, 2 or more higher than the previous block?
       // we can now either
       // * disregard the block:
-      //   return false;
+      //   return null;
       // * create (usually schema-violating) nested lists until the specified depth:
-      //   const listNode = addChild(container, createNode('list'))
-      //   container = addChild(listNode, createNode('item'))
+      //   const listNode = createNode("list")
+      // . addChild(container, listNode)
+      //   container = createNode("item")
+      //   container = addChild(listNode, container)
       // * or ignore the depth (and create a list at a lower level):
       break;
     }
   }
-  let listNode = container.content?.at(-1); // an existing (list?) node as the last child of the container
+  let listNode = container.content?.at(-1);// an existing (list?) node as the last child of the container
   if (!listNode || listNode.type !== listNodeType) { // for the direct parent of the list item, we also care about the particular list type, not just that it's any list
-    listNode = addChild(container, createNode(listNodeType))
+    listNode = createNode(listNodeType);
+    addChild(container, listNode)
   }
 
   addChild(
     listNode,
     createNode(listItemNodeType, {
-      attrs: outerListItemNodeType === "taskItem" ? { checked: Boolean(currentBlock.data?.checked) } : undefined,
+      ...listItemNodeType === "taskItem"
+          ? { attrs: { checked: Boolean(currentBlock.data?.checked) } }
+          : {},
       content: [
         createNode("paragraph", {
           content: converter.splitTextByEntityRangesAndInlineStyleRanges({
@@ -176,12 +183,9 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
     if (block.entityRanges.length === 0) {
       if (block.inlineStyleRanges.length === 0) {
         // Plain text, fast path
-        return createText(block.text);
+        return addChild(createNode("paragraph"), createText(block.text));
       }
     }
-    // TODO atomic blocks use entities, to generate nodes
-    // Does it make sense to wrap them in a paragraph?
-    const paragraph = createNode("paragraph");
     const entities = block.entityRanges
       .map((range) => {
         return converter.mapEntityToNode({
@@ -192,13 +196,13 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
           converter,
         });
       })
-      .filter(Boolean);
+      .filter(node => node != null);
 
-    if (entities.length === 0) {
+    if (entities.length !== 1) {
       return null;
     }
 
-    return addChild(paragraph, entities);
+    return entities[0];
   },
   "code-block"({ block }) {
     return addChild(createNode("codeBlock"), createText(block.text));

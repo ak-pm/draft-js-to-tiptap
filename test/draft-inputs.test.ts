@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import { DraftConverter } from "../src/index";
 import draftListSimple from "./draft-list-simple.json";
 import draftDeepList from "./draft-deep-list.json";
+import draftNestedList from "./draft-nested-list.json";
 import draftCheckableListSimple from "./draft-checkable-list-simple.json";
 import draftList from "./draft-list.json";
 import draftCheckableList from "./draft-checkable-list.json";
@@ -19,6 +20,11 @@ test("draft-list-simple", () => {
 test("draft-deep-list", () => {
   const converter = new DraftConverter();
   expect(converter.convert(draftDeepList)).toMatchSnapshot();
+});
+
+test("draft-nested-list", () => {
+  const converter = new DraftConverter();
+  expect(converter.convert(draftNestedList)).toMatchSnapshot();
 });
 
 test("draft-checkable-list-simple", () => {
