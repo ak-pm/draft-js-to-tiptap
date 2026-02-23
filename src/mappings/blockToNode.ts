@@ -50,104 +50,58 @@ const getListNodeType = (blockType: RawDraftContentBlock["type"]): ListNodeNames
  * Lists are represented as a tree structure in ProseMirror.
  * Whereas in Draft.js they are represented as a flat list.
  * So, we need to build the tree structure for the list.
+ * This is done by mutating the document in the right place,
+ * block by block.
  */
-const mapToListNode: MapBlockToNodeFn = function ({
+const addListItemBlock: MapBlockToNodeFn = function ({
   doc,
   getCurrentBlock,
   entityMap,
-  peek,
-  next,
-  peekPrev,
-  converter,
+  converter
 }) {
-  // Find outer list and listItem node types
-  const { listNodeType: outerListNodeType, listItemNodeType: outerListItemNodeType } = getListNodeType(getCurrentBlock().type);
-  // Start a new outer list
-  const outerListNode = createNode(outerListNodeType);
-
-  while (true) {
-    let listNode = outerListNode;
-
-    const currentBlock = getCurrentBlock();
-    const { listNodeType: innerListNodeType } = getListNodeType(currentBlock.type)
-    let depth = 0;
-
-    const prevBlock = peekPrev();
-    const prevBlockDepth = prevBlock && ["unordered-list-item", "ordered-list-item", "checkable-list-item"].includes(prevBlock.type)
-        ? prevBlock.depth
-        : -1;
-    const currentBlockDepth = currentBlock.depth > prevBlockDepth ? prevBlockDepth + 1 : currentBlock.depth;
-
-    while (depth < currentBlockDepth) {
-      if (!listNode.content?.length) {
-        listNode.content = [];
-      }
-      // There are list items in-between, find the most recent one
-      let mostRecentListItem = listNode.content[listNode.content.length - 1];
-      if (!mostRecentListItem) {
-        mostRecentListItem = createNode(outerListItemNodeType);
-        addChild(listNode, mostRecentListItem);
-      }
-
-      let nextMostRecentList =
-        mostRecentListItem.content?.[mostRecentListItem.content.length - 1];
-
-      if (isListNode(nextMostRecentList)) {
-        // We found a list, move to the next one
-        listNode = nextMostRecentList;
-
-        depth++;
-      } else {
-        // We didn't find a list, in the last position, create a new one
-        nextMostRecentList = createNode(innerListNodeType);
-
-        addChild(mostRecentListItem, nextMostRecentList);
-
-        listNode = nextMostRecentList;
-        // Tiptap doesn't support nesting lists, so we break here
-        break;
-      }
-    }
-
-    // We found the correct list, add the new list item
-    addChild(
-      listNode,
-      // "bulletList" and "orderedList" could nest each other but not "taskList" and vice versa
-      createNode(outerListItemNodeType, {
-        ...outerListItemNodeType === "taskItem"
-          ? { attrs: { checked: Boolean(currentBlock.data?.checked) } }
-          : {},
-        content: [
-          createNode("paragraph", {
-            content: converter.splitTextByEntityRangesAndInlineStyleRanges({
-              doc,
-              block: currentBlock,
-              entityMap,
-            }),
-          }),
-        ],
-      })
-    );
-
-    const nextBlock = peek();
-    if (
-      !(
-        (nextBlock && nextBlock.type === "unordered-list-item") ||
-        (nextBlock && nextBlock.type === "ordered-list-item") ||
-        (nextBlock && nextBlock.type === "checkable-list-item")
-      )
-    ) {
+  const currentBlock = getCurrentBlock();
+  const { listNodeType, listItemNodeType } = getListNodeType(currentBlock.type);
+  let container = doc;
+  for (let depth = 0; depth < currentBlock.depth; depth++) {
+    const listNode = container.content?.at(-1); // an existing (list?) node as the last child of the container
+    if (listNode && isListNode(listNode)) {
+      const listItem = listNode.content[listNode.content.length - 1]; // it's a list node, which is never empty
+      container = listItem; // search for/add nested lists here
+    } else {
+      // there is no existing list at the necessary depth, constructed for a previous list item block
+      // `currentBlock.depth` is too large, 2 or more higher than the previous block?
+      // we can now either
+      // * disregard the block:
+      //   return false;
+      // * create (usually schema-violating) nested lists until the specified depth:
+      //   const listNode = addChild(container, createNode('list'))
+      //   container = addChild(listNode, createNode('item'))
+      // * or ignore the depth (and create a list at a lower level):
       break;
     }
-
-    if (nextBlock && nextBlock.type !== currentBlock.type) {
-      // We are switching between ordered and unordered lists
-      break;
-    }
-    next();
+  }
+  let listNode = container.content?.at(-1); // an existing (list?) node as the last child of the container
+  if (!listNode || listNode.type !== listNodeType) { // for the direct parent of the list item, we also care about the particular list type, not just that it's any list
+    listNode = addChild(container, createNode(listNodeType))
   }
 
-  return outerListNode;
+  addChild(
+    listNode,
+    createNode(listItemNodeType, {
+      attrs: outerListItemNodeType === "taskItem" ? { checked: Boolean(currentBlock.data?.checked) } : undefined,
+      content: [
+        createNode("paragraph", {
+          content: converter.splitTextByEntityRangesAndInlineStyleRanges({
+            doc,
+            block: currentBlock,
+            entityMap
+          })
+        })
+      ]
+    })
+  );
+
+  return true;
 };
 
 const mapToHeadingNode: MapBlockToNodeFn = function ({
@@ -265,9 +219,9 @@ export const blockToNodeMapping: Record<string, MapBlockToNodeFn> = {
   unstyled: mapToParagraphNode,
   section: mapToParagraphNode,
   article: mapToParagraphNode,
-  "unordered-list-item": mapToListNode,
-  "ordered-list-item": mapToListNode,
-  "checkable-list-item": mapToListNode,
+  "unordered-list-item": addListItemBlock,
+  "ordered-list-item": addListItemBlock,
+  "checkable-list-item": addListItemBlock,
   "header-one": mapToHeadingNode,
   "header-two": mapToHeadingNode,
   "header-three": mapToHeadingNode,
